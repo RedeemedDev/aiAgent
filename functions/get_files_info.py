@@ -1,4 +1,5 @@
 import os
+from functions.config import char_limit
 
 def get_files_info(working_directory, directory="."):
     abs_working_dir = os.path.abspath(working_directory)
@@ -23,3 +24,22 @@ def get_files_info(working_directory, directory="."):
         except Exception as e:
             files_info.append(f"- {entry}: Error: {str(e)}")
     return "\n".join(files_info)
+
+def get_file_content(working_directory, file_path):
+    abs_working_dir = os.path.abspath(working_directory)
+    abs_target_dir = os.path.abspath(os.path.join(working_directory, file_path))
+
+    if not abs_target_dir.startswith(abs_working_dir):
+        return f'Error: Cannot list "{file_path}" as it is outside the permitted working directory'
+    if not os.path.isfile(abs_target_dir):
+        return f'Error: File not found or is not a regular file: "{file_path}"'
+    
+    #try: read the file content
+    try:
+        with open(abs_target_dir, 'r') as f:
+            content = f.read()
+            if len(content) > char_limit:
+                content = content[:char_limit] + f'[...File "{abs_target_dir}" truncated at {char_limit} characters]'
+            return content
+    except Exception as e:
+        return f'Error: {str(e)}'    
