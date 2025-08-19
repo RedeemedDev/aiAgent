@@ -2,15 +2,23 @@ from functions.get_files_info import *
 
 def run_tests():
     print("Result for current directory:")
-    print(write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum"))
+    print(run_python_file("calculator", "main.py"))
     print()
 
     print("Result for current directory:")
-    print(write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet"))
+    print(run_python_file("calculator", "main.py", ["3 + 5"]))    
     print()
 
     print("Result for current directory:")
-    print(write_file("calculator", "/tmp/temp.txt", "this should not be allowed"))
+    print(run_python_file("calculator", "tests.py"))
+    print()
+
+    print("Result for current directory:")
+    print(run_python_file("calculator", "../main.py"))
+    print()
+
+    print("Result for current directory:")
+    print(run_python_file("calculator", "nonexistent.py"))
     print()
 
 if __name__ == "__main__":

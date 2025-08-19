@@ -59,3 +59,26 @@ def write_file(working_directory, file_path, content):
         return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
     except Exception as e:
         return f'Error: {str(e)}'
+    
+def run_python_file(working_directory, file_path, args=[]):
+    abs_working_dir = os.path.abspath(working_directory)
+    abs_target_dir = os.path.abspath(os.path.join(working_directory, file_path))
+    
+    if not abs_target_dir.startswith(abs_working_dir):
+        return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
+    if not os.path.isfile(abs_target_dir):
+        return f'Error: File "{file_path}" not found.'
+    if not file_path.endswith('.py'):
+        return f'Error: "{file_path}" is not a Python file.'
+    
+    try:
+        import subprocess
+        result = subprocess.run(['python3', file_path] + args, cwd=working_directory, timeout=30, capture_output=True, text=True)
+        if result.returncode != 0:
+            return f'STDOUT: {result.stdout.strip()}, \nSTDERR: {result.stderr.strip()}, \nProcess exited with code {result.returncode}'
+        if result.stdout == '' and result.stderr == '':
+                return f'No output produced.'
+        return f'STDOUT: {result.stdout.strip()}, \nSTDERR: {result.stderr.strip()}'
+
+    except Exception as e:
+        return f'Error: executing Python file: {e}'
